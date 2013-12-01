@@ -15,7 +15,7 @@ From a sysadmin perspective, deploying these old applications can be pretty comp
 
 That's not awesome at all. More servers - especially servers that run a very low number of low-traffic apps - seems like a waste of resources, money and time:
 
-![CPU for the last month for an app server](https://github.com/darron/sysadvent-docker/master/article-support/cpu-for-the-last-month.png)
+![CPU for the last month for an app server](https://raw.github.com/darron/sysadvent-docker/master/article-support/cpu-for-the-last-month.png)
 
 Yes - I know about RVM, but haven't been a huge fan of using it on the server.
 
