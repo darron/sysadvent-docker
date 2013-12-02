@@ -62,7 +62,7 @@ We're going to create some roles for our servers:
 
 Let's launch these servers:
 
-`ec2-run-instances --key dfroese-naw -g sg-group --user-data-file user-data-file/master ami-docker --region us-west-2`
+`ec2-run-instances --key dfroese-naw -g sg-1a3b0e2a --user-data-file user-data-file/master ami-e876ecd8 --region us-west-2`
 
 Once we have the IP for that server, we'll launch the others and cause them to join the serf cluster:
 

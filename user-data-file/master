@@ -1,0 +1,4 @@
+#!/bin/bash
+echo "ROLE=master" > /etc/serf/role
+git clone https://github.com/darron/serf-docker-events.git /etc/serf/handlers
+/usr/sbin/service serf restart
