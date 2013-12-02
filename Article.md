@@ -62,37 +62,61 @@ We're going to create some roles for our servers:
 
 Let's launch these servers:
 
-`ec2-run-instances --key dfroese-naw -g sg-1a3b0e2a --user-data-file user-data-file/master ami-e876ecd8 --region us-west-2`
+`ec2-run-instances --key dfroese-naw -g sg-1a3b0e2a --user-data-file user-data-file/master ami-38204508 --region us-west-2`
 
-Once we have the IP for that server, we'll launch the others and cause them to join the serf cluster:
+Once we have the IP for that server, we'll launch the others and get them to join the serf cluster:
 
 ```
-ec2-run-instances --key dfroese-naw -g sg-group --user-data-file user-data-file/build ami-docker --region us-west-2
-ec2-run-instances --key dfroese-naw -g sg-group --user-data-file user-data-file/store ami-docker --region us-west-2
-ec2-run-instances --key dfroese-naw -g sg-group --user-data-file user-data-file/serve ami-docker --region us-west-2
+ec2-run-instances --key dfroese-naw -g sg-1a3b0e2a --user-data-file user-data-file/build ami-38204508 --region us-west-2
+ec2-run-instances --key dfroese-naw -g sg-1a3b0e2a --user-data-file user-data-file/store ami-38204508 --region us-west-2
+ec2-run-instances --key dfroese-naw -g sg-1a3b0e2a --user-data-file user-data-file/serve ami-38204508 --region us-west-2
 ```
 
 We're using [Amazon's User Data](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AESDG-chapter-instancedata.html) system to:
 
-1. Set the system's role.
-2. Download the serf event handlers for that role. Link to each set of event handlers.
-3. Active those handlers.
+1. Set the system's Serf role.
+2. Download the [Serf event handlers](https://github.com/darron/serf-docker-events).
+3. [Activate](https://github.com/octohost/octohost/blob/master/config/serf.conf#L23-L32) those handlers.
 4. Join the cluster by connecting to the first 'master' system.
 5. Any additional setup for that role as needed.
 
-Put ASCII cast here?? Maybe.
-
 Now that we've got the systems connected - let's send some test events.
 
-`serf event echo-role`
+`serf event role-check`
 
-Show output from each server.
+When that event is sent, each system executes [/etc/serf/handlers/role-check.sh](https://github.com/darron/serf-docker-events/blob/master/role-check.sh) - this is some of the output:
 
-You can also watch what's going on:
+```
+2013/12/02 23:07:21 Requesting user event send: role-check. Coalesced: true. Payload: ""
+2013/12/02 23:07:22 [INFO] agent: Received event: user-event: role-check
+2013/12/02 23:07:22 [DEBUG] Event 'user' script output: ip-10-250-69-116 role is master
+2013/12/02 23:07:22 [DEBUG] Event 'user' script output: ip-10-250-65-99 role is store
+2013/12/02 23:07:22 [DEBUG] Event 'user' script output: ip-10-225-185-80 role is serve
+2013/12/02 23:07:22 [DEBUG] Event 'user' script output: ip-10-227-14-222 role is build
+```
+
+You can also watch what's going on with the entire cluster:
 
 `serf monitor`
 
-Let's make this happen.
+```
+2013/12/02 23:07:21 Requesting user event send: role-check. Coalesced: true. Payload: ""
+2013/12/02 23:07:21 [DEBUG] serf-delegate: messageUserEventType: role-check
+2013/12/02 23:07:21 [DEBUG] serf-delegate: messageUserEventType: role-check
+2013/12/02 23:07:21 [DEBUG] serf-delegate: messageUserEventType: role-check
+2013/12/02 23:07:21 [DEBUG] serf-delegate: messageUserEventType: role-check
+2013/12/02 23:07:21 [DEBUG] serf-delegate: messageUserEventType: role-check
+2013/12/02 23:07:22 [INFO] agent: Received event: user-event: role-check
+2013/12/02 23:07:22 [DEBUG] Event 'user' script output: ip-10-250-69-116 role is master
+2013/12/02 23:07:23 [INFO] serf: EventMemberFailed: ip-10-225-185-80 10.225.185.80
+2013/12/02 23:07:24 [INFO] agent: Received event: member-failed
+2013/12/02 23:07:27 [INFO] Responding to push/pull sync with: 10.250.65.99:33341
+2013/12/02 23:07:27 [INFO] serf: EventMemberJoin: ip-10-225-185-80 10.225.185.80
+2013/12/02 23:07:28 [INFO] agent: Received event: member-join
+2013/12/02 23:07:51 [INFO] Initiating push/pull sync with: 10.225.185.80:7946
+```
+
+Now let's do something useful.
 ----------
 
 Let's tell the build server to compile a git repo.
