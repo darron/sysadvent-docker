@@ -1,0 +1,6 @@
+#!/bin/bash
+echo "ROLE=store" > /etc/serf/role
+git clone https://github.com/darron/serf-docker-events.git /etc/serf/handlers
+/usr/sbin/service serf restart
+sleep 5
+/usr/local/bin/serf join 10.250.69.116
