@@ -26,17 +26,97 @@ Kind of a waste. Docker can change all of that.
 
 With Docker you can run [containers](http://docs.docker.io/en/latest/terms/container/#container-def) for any of your applications and run all of those applications \(and more\) on a single server. No crazy gem / Ruby version problems - everything in it's own self-contained container. No more "I don't have python 3.3 on that server." or "Sorry - can't compile that version of Node on that old box - gotta move it."
 
-We like Docker so much, that we're building a new service with it providing the backend infrastructure. It's named [octohost](https://github.com/octohost/octohost) and is available on [Github](https://github.com/octohost).
+We like Docker so much, that we're building a new service with it providing the backend infrastructure. Our backend is named [octohost](https://github.com/octohost/octohost) and is available on [Github](https://github.com/octohost).
 
 Enter - Serf
 ---------
 
+The [Serf](http://www.serfdom.io/) website bills it as:
+
+>Serf is a decentralized solution for service discovery 
+>and orchestration that is lightweight, highly available, 
+>and fault tolerant.
+
+Basically, Serf is a new system built to pass messages around and trigger events from server to server - some [examples are listed on the website](http://www.serfdom.io/intro/use-cases.html). Instead of building your own messaging system or inventing a new daemon, you can connect a number of servers together using Serf and use it to trigger "events".
+
+We're going to use it to connect a number of Docker servers together:
+
+1. Compile server - this server compiles the software into a Docker container and pushes it to the Registry server.
+2. Registry server - this server receives and stores the container.
+3. Web server - this server pulls the container once it's ready to download and makes it available on the web.
+
+We're going to kick this off from another server - by sending Serf events and making custom handlers for each "type" of server.
+
+Serf has the concept of [Roles](http://www.serfdom.io/docs/agent/options.html) where you can tell a particular member of the cluster that it's a "\{insert-role-here\}" and only the events that apply to that role will be executed.
+
+We're going to create some roles for our servers:
+
+1. build
+2. store
+3. serve
+4. master
+
+Let's launch these servers:
+
+`ec2-run-instances --key dfroese-naw -g sg-group --user-data-file user-data-file/master ami-docker --region us-west-2`
+
+Once we have the IP for that server, we'll launch the others and cause them to join the serf cluster:
+
+```
+ec2-run-instances --key dfroese-naw -g sg-group --user-data-file user-data-file/build ami-docker --region us-west-2
+ec2-run-instances --key dfroese-naw -g sg-group --user-data-file user-data-file/store ami-docker --region us-west-2
+ec2-run-instances --key dfroese-naw -g sg-group --user-data-file user-data-file/serve ami-docker --region us-west-2
+```
+
+We're using [Amazon's User Data](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AESDG-chapter-instancedata.html) system to:
+
+1. Set the system's role.
+2. Download the serf event handlers for that role. Link to each set of event handlers.
+3. Active those handlers.
+4. Join the cluster by connecting to the first 'master' system.
+5. Any additional setup for that role as needed.
+
+Put ASCII cast here?? Maybe.
+
+Now that we've got the systems connected - let's send some test events.
+
+`serf event echo-role`
+
+Show output from each server.
+
+You can also watch what's going on:
+
+`serf monitor`
+
+Let's make this happen.
+----------
+
+Let's tell the build server to compile a git repo.
+
+`serf event compile|giturl`
+
+Once it's done, it pushes it to the registry.
+
+Once that's done, the serve system pulls it from the registry and makes it visible on the web.
+
+You can add all sorts of other event handlers.
+----------
+
+`serf event delete-container`
+
+`serf event disable-container`
+
+Extra credit if I have time
+----------
+
+Connect this to [hubot](http://hubot.github.com/) through [capitoshka](https://github.com/darron/capitoshka) already running on [Heroku](http://capitoshka.herokuapp.com/projects).
 
 
 
 
-Servers:
 
-1. Compile
-2. INDEX / Storage
-3. Web Serve
+
+
+
+
+
