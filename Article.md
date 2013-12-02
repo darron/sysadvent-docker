@@ -6,6 +6,8 @@ First - Docker
 
 This year's introduction of [Docker](http://www.docker.io) has been huge for sysadmins everywhere. Whether or not you already understand what Docker can do for you - let me assure you - it has the potential to change how we think about servers.
 
+<a href="http:/www.docker.io"><img src="http://github.froese.org/assets/sysadvent-2013/docker.png" align="right" width="150" border="0" /></a>
+
 At [nonfiction](http://www.nonfiction.ca), we host a large number of web applications for customers. Some of those web applications were developed for a specific purpose and because they're often not *business critical*, they don't get a lot of regular updates. They don't have the budget or the desire to continue working on them year after year - upgrading as techonology matures. As a result, we have a number of pretty old web applications that work pretty well but are not based on current technology.
 
 From a sysadmin perspective, deploying these old applications can be pretty complicated - the dependancies can be pretty hairy and are downright fickle. Because we can't always use [Heroku](https://www.heroku.com/) for the application, we end up having:
@@ -32,6 +34,8 @@ Enter - Serf
 ---------
 
 The [Serf](http://www.serfdom.io/) website bills it as:
+
+<a href="http://www.serfdom.io/"><img src="http://github.froese.org/assets/sysadvent-2013/serf.png" align="right" border="0" /></a>
 
 >Serf is a decentralized solution for service discovery 
 >and orchestration that is lightweight, highly available, 
