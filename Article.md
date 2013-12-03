@@ -116,7 +116,14 @@ You can also watch what's going on with the entire cluster:
 Now let's do something useful.
 ----------
 
-Let's tell the build server to compile a git repo, push it to the Docker INDEX, then pull and launch it so it's viewable from the web.
+Let's tell the octohost server cluster to:
+
+1. Compile a git repo.
+2. Push it to the Docker INDEX
+3. Have another server pull that container.
+4. Then launch it so it's viewable from the web.
+
+Here's how we kick it off:
 
 `serf event build https://github.com/darron/sysadvent-harp.git,sysadvent/harp-example`
 
@@ -207,16 +214,18 @@ So that [it can run it](https://github.com/darron/serf-docker-events/blob/master
 
 And it was available at: http://harp-example.54.202.94.50.xip.io/
 
+<a href="http://sysadvent-harp.octohost.io/"><img src="http://github.froese.org/assets/sysadvent-2013/sysadvent-web.jpg" align="right" width="400" border="0" /></a>
+
 Which looked like this: 
 
-
-
-You can add all sorts of other event handlers.
+To sum up
 ----------
 
-`serf event delete-container`
+Serf is a new tool that we have added to our toolboxes as sysadmins.
 
-`serf event disable-container`
+It's very powerful - simple to setup and can be extended in almost limitless ways.
+
+Give it a shot.
 
 Extra credit if I have time
 ----------
