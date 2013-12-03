@@ -221,23 +221,16 @@ Which looked like this:
 To sum up
 ----------
 
-Serf is a new tool that we have added to our toolboxes as sysadmins.
+Serf is a new tool that has been added to our toolboxes as sysadmins.
 
-It's very powerful - simple to setup and can be extended in almost limitless ways.
+It's very powerful, simple to setup and can be extended in almost limitless ways.
 
-Give it a shot.
+Give it a [shot](http://www.serfdom.io/).
 
 Extra credit if I have time
 ----------
 
 Connect this to [hubot](http://hubot.github.com/) through [capitoshka](https://github.com/darron/capitoshka) already running on [Heroku](http://capitoshka.herokuapp.com/projects).
-
-
-
-
-
-
-
 
 
 
