@@ -4,13 +4,13 @@ Using Serf to control a cluster of Docker servers.
 First - Docker
 --------
 
-This year's introduction of [Docker](http://www.docker.io) has been huge for sysadmins everywhere. Whether or not you already understand what Docker can do for you - let me assure you - it has the potential to change how we think about servers.
+This year's introduction of [Docker](http://www.docker.io) has been huge for sysadmins everywhere. Whether or not you already understand what Docker can do for you - let me assure you - it has the potential to change how we think, work and build services.
 
 <a href="http:/www.docker.io"><img src="http://github.froese.org/assets/sysadvent-2013/docker.png" align="right" width="150" border="0" /></a>
 
 At [nonfiction](http://www.nonfiction.ca), we host a large number of web applications for customers. Some of those web applications were developed for a specific purpose and because they're often not *business critical*, they don't get a lot of regular updates. They don't have the budget or the desire to continue working on them year after year - upgrading as techonology matures. As a result, we have a number of pretty old web applications that work pretty well but are not based on current technology.
 
-From a sysadmin perspective, deploying these old applications can be pretty complicated - the dependancies can be pretty hairy and are downright fickle. Because we can't always use [Heroku](https://www.heroku.com/) for the application, we end up having:
+From a sysadmin perspective, deploying these old applications can be pretty complicated - the dependancies can be pretty hairy and are downright fickle. Although we often us [Heroku](https://www.heroku.com/) for many applications, we stil end up having:
 
 1. Ruby 1.8.x Server
 2. Ruby 1.9.x Server
@@ -24,7 +24,9 @@ More servers - especially servers that run a very low number of low-traffic apps
 
 ![CPU for the last month for an app server](http://github.froese.org/assets/sysadvent-2013/cpu-for-the-last-month.png)
 
-Kind of a waste. Docker can change all of that.
+What a waste.
+
+Docker changes all of that.
 
 With Docker you can run [containers](http://docs.docker.io/en/latest/terms/container/#container-def) for any of your applications and run all of those applications \(and more\) on a single server. No crazy gem / Ruby version problems - everything in it's own self-contained container. No more "I don't have python 3.3 on that server." or "Sorry - can't compile that version of Node on that old box - gotta move it."
 
@@ -41,15 +43,13 @@ The [Serf](http://www.serfdom.io/) website bills it as:
 >and orchestration that is lightweight, highly available, 
 >and fault tolerant.
 
-Basically, Serf is a new system built to pass messages around and trigger events from server to server - some [examples are listed on the website](http://www.serfdom.io/intro/use-cases.html). Instead of building your own messaging system or inventing a new daemon, you can connect a number of servers together using Serf and use it to trigger "events".
+In short, Serf is a system built to pass messages around and trigger events from server to server - some [examples are listed on the website](http://www.serfdom.io/intro/use-cases.html). Instead of building your own messaging system or inventing a new daemon, you can connect a number of servers together using Serf and use it to trigger "events".
 
-We're going to use it to connect a number of Docker servers together:
+We're going to use it to connect some Docker servers together:
 
 1. Compile server - this server compiles the software into a Docker container and pushes it to the Registry server.
-2. Registry server - this server receives and stores the container. \(We are using the regular Docker INDEX for this.\)
+2. Registry server - this server receives and stores the container. \(We are cheating and using the regular Docker INDEX for this.\)
 3. Web server - this server pulls the container once it's ready to download and makes it available on the web.
-
-We're going to kick this off from another server - by sending Serf events and making custom handlers for each "type" of server.
 
 Serf has the concept of [Roles](http://www.serfdom.io/docs/agent/options.html) where you can tell a particular member of the cluster that it's a "\{insert-role-here\}" and only the events that apply to that role will be executed.
 
@@ -76,7 +76,7 @@ We're using [Amazon's User Data](http://docs.aws.amazon.com/AWSEC2/latest/UserGu
 2. Download the [Serf event handlers](https://github.com/darron/serf-docker-events).
 3. [Activate](https://github.com/octohost/octohost/blob/master/config/serf.conf#L23-L32) those handlers.
 4. Join the cluster by connecting to the first 'master' system.
-5. Any additional setup for that role as needed. [Take a look at them here.](https://github.com/darron/sysadvent-docker/tree/master/user-data-file)
+5. Any additional setup for that role as needed. [Take a look at the user-data-files here.](https://github.com/darron/sysadvent-docker/tree/master/user-data-file)
 
 Now that we've got the systems connected - let's send some test events.
 
@@ -92,7 +92,7 @@ When that event is sent, each system executes [/etc/serf/handlers/role-check.sh]
 2013/12/02 23:07:22 [DEBUG] Event 'user' script output: ip-10-227-14-222 role is build
 ```
 
-You can also watch what's going on with the entire cluster:
+You can also watch what's going on through the entire cluster:
 
 `serf monitor`
 
@@ -116,7 +116,7 @@ You can also watch what's going on with the entire cluster:
 Now let's do something useful.
 ----------
 
-Let's tell the octohost server cluster to:
+Let's tell the Docker server cluster to:
 
 1. Compile a git repo.
 2. Push it to the Docker INDEX
@@ -141,7 +141,7 @@ Event 'build' dispatched! Coalescing enabled: true
 2013/12/03 21:08:51 [DEBUG] Event 'user' script output: Build: https://github.com/darron/sysadvent-harp.git as sysadvent/harp-example in /tmp/tmp.WcrVsKOn1m
 ```
 
-Now the [build starts](https://github.com/darron/serf-docker-events/blob/master/build.sh):
+The [build starts](https://github.com/darron/serf-docker-events/blob/master/build.sh):
 
 ```
 Cloning into '/tmp/tmp.WcrVsKOn1m'...
@@ -156,9 +156,7 @@ Step 3 : RUN cd /srv/www; npm install
 npm WARN package.json Harp@1.0.0 No repository field.
 npm http GET https://registry.npmjs.org/harp
 npm http 200 https://registry.npmjs.org/harp
-
 # Removed lots of npm output.
-
 harp@0.8.13 node_modules/harp
 ├── mime@1.2.9
 ├── async@0.2.9
@@ -179,16 +177,17 @@ Step 5 : CMD cd /srv/www; /usr/bin/node server.js
 Successfully built 5a69fee1c103
 ```
 
-Then pushes the [built container to the registry and kicks off the pull](https://github.com/darron/serf-docker-events/blob/master/build.sh#L19-L21):
+The build server pushes the [built container to the registry and kicks off the pull](https://github.com/darron/serf-docker-events/blob/master/build.sh#L19-L21):
 
 ```
 Login Succeeded
 The push refers to a repository [sysadvent/harp-example] (len: 1)
 Sending image list
 Pushing repository sysadvent/harp-example (1 tags)
+# Lots of output removed.
 ```
 
-Then the 'serve' role [pulls the container and kicks off the run event](https://github.com/darron/serf-docker-events/blob/master/pull.sh#L10-L11):
+Then the server in the 'serve' role [pulls the container](https://github.com/darron/serf-docker-events/blob/master/pull.sh#L10-L11):
 
 ```
 Event 'pull' dispatched! Coalescing enabled: true
@@ -198,6 +197,7 @@ Event 'pull' dispatched! Coalescing enabled: true
 2013/12/03 21:08:52 [DEBUG] Event 'user' script output: Pull: sysadvent/harp-example
 Pulling repository sysadvent/harp-example
 5a69fee1c103: Pulling image (latest) from sysadvent/harp-example5a69fee1c103: Pulling image (latest) from sysadvent/harp-example, endpoint: https://cdn-registry-1.docker.io/v1/5a69fee1c103: Pulling dependent layers
+# More output removed.
 ```
 
 So that [it can run it](https://github.com/darron/serf-docker-events/blob/master/run.sh):
@@ -212,7 +212,7 @@ So that [it can run it](https://github.com/darron/serf-docker-events/blob/master
 2013/12/03 21:10:29 [DEBUG] Event 'user' script output: Run: sysadvent/harp-example
 ```
 
-And it was available at: http://harp-example.54.202.94.50.xip.io/
+At the end of this process, the site was available at: http://harp-example.54.202.94.50.xip.io/
 
 <a href="http://sysadvent-harp.octohost.io/"><img src="http://github.froese.org/assets/sysadvent-2013/sysadvent-web.jpg" align="right" width="400" border="0" /></a>
 
