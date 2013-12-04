@@ -225,7 +225,7 @@ Serf is a new tool that has been added to our toolboxes as sysadmins.
 
 It's very powerful, simple to setup and can be extended in almost limitless ways.
 
-Give Serf a [try](http://www.serfdom.io/). My example Serf handlers are all available [here](https://github.com/darron/serf-docker-events).
+Give Serf a [try](http://www.serfdom.io/). My example Serf handlers are all available [here](https://github.com/darron/serf-docker-events). You can even use the same AMI that I used for this article - ami-38204508.
 
 [Let me know](http://darron.froese.org/) if you've got any questions!
 
