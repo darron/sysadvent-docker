@@ -229,10 +229,5 @@ Give Serf a [try](http://www.serfdom.io/). My example Serf handlers are all avai
 
 [Let me know](http://darron.froese.org/) if you've got any questions!
 
-Extra credit if I have time
-----------
-
-Connect this to [hubot](http://hubot.github.com/) through [capitoshka](https://github.com/darron/capitoshka) already running on [Heroku](http://capitoshka.herokuapp.com/projects).
-
 
 
