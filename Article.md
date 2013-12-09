@@ -1,7 +1,7 @@
 Using Serf to control a cluster of Docker servers.
 =================
 
-First - Docker
+First - Docker and Dependancy Management
 --------
 
 This year's introduction of [Docker](http://www.docker.io) has been huge for sysadmins everywhere. Whether or not you already understand what Docker can do for you - let me assure you - it has the potential to change how we think, work and build services.
@@ -20,7 +20,7 @@ From a sysadmin perspective, deploying these old applications can be pretty comp
 
 That's not awesome at all.
 
-More servers - especially servers that run a very low number of low-traffic apps - seems like a waste of resources, money and time. For example, here's the cpu usage for an old Ruby 1.8.x application server:
+More servers - especially servers that run a very low number of low-traffic apps - seems like a waste of resources, money and time. We are paying for too much capacity in order to get cleaner dependency management. For example, here's the cpu usage for an old Ruby 1.8.x application server:
 
 ![CPU for the last month for an app server](http://github.froese.org/assets/sysadvent-2013/cpu-for-the-last-month.png)
 
